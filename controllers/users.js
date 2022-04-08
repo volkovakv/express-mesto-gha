@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable function-paren-newline */
 /* eslint-disable arrow-parens */
 const User = require('../models/user');
@@ -14,16 +15,20 @@ module.exports.createUser = async (req, res) => {
 };
 
 module.exports.getUser = async (req, res) => {
-  const ERROR_CODE_NOTFOUND = 404;
   const ERROR_CODE_DEFAULT = 500;
+  const ERROR_CODE_NOTFOUND = 404;
+  const ERROR_CODE_REQUEST = 400;
   try {
     const userItem = await User.findById(req.params.userId);
     if (userItem) {
       res.status(200).send(userItem);
     } else {
-      res.status(ERROR_CODE_NOTFOUND).send({ message: 'Пользователь не найден' });
+      return res.status(ERROR_CODE_NOTFOUND).send({ message: 'Пользователь не найден' });
     }
   } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные пользователя' });
+    }
     res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка сервера' });
   }
 };
@@ -40,6 +45,7 @@ module.exports.getAllUsers = async (req, res) => {
 
 module.exports.updateUser = async (req, res) => {
   const ERROR_CODE_REQUEST = 400;
+  const ERROR_CODE_NOTFOUND = 404;
   const ERROR_CODE_DEFAULT = 500;
   try {
     const { name, about } = req.body;
@@ -57,12 +63,19 @@ module.exports.updateUser = async (req, res) => {
       res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные пользователя' });
     }
   } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные пользователя' });
+    }
+    if (err.name === 'CastError') {
+      return res.status(ERROR_CODE_NOTFOUND).send({ message: 'Пользователь не найден' });
+    }
     res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка сервера' });
   }
 };
 
 module.exports.updateUserAvatar = async (req, res) => {
   const ERROR_CODE_REQUEST = 400;
+  const ERROR_CODE_NOTFOUND = 404;
   const ERROR_CODE_DEFAULT = 500;
   try {
     const { avatar } = req.body;
@@ -80,6 +93,12 @@ module.exports.updateUserAvatar = async (req, res) => {
       res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные пользователя' });
     }
   } catch (err) {
+    if (err.name === 'ValidationError') {
+      res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные пользователя' });
+    }
+    if (err.name === 'CastError') {
+      return res.status(ERROR_CODE_NOTFOUND).send({ message: 'Пользователь не найден' });
+    }
     res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка сервера' });
   }
 };

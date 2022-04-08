@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 /* eslint-disable consistent-return */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
@@ -26,6 +27,7 @@ module.exports.createCard = async (req, res) => {
 };
 
 module.exports.deleteCard = async (req, res) => {
+  const ERROR_CODE_REQUEST = 400;
   const ERROR_CODE_NOTFOUND = 404;
   const ERROR_CODE_DEFAULT = 500;
   try {
@@ -33,15 +35,20 @@ module.exports.deleteCard = async (req, res) => {
     if (Card) {
       res.status(200).send({ data: cardForDelete });
     } else {
-      res.status(ERROR_CODE_NOTFOUND).send({ message: 'Карточка не найдена' });
+      return res.status(ERROR_CODE_NOTFOUND).send({ message: 'Карточка не найдена' });
     }
   } catch (err) {
+    console.log(err.name);
+    if (err.name === "CastError") {
+      return res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные карточки' });
+    }
     res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка сервера' });
   }
 };
 
 module.exports.likeCard = async (req, res) => {
   const ERROR_CODE_REQUEST = 400;
+  const ERROR_CODE_NOTFOUND = 404;
   const ERROR_CODE_DEFAULT = 500;
   try {
     const likeCard = Card.findByIdAndUpdate(
@@ -52,15 +59,19 @@ module.exports.likeCard = async (req, res) => {
     if (likeCard) {
       res.status(201).send(likeCard);
     } else {
-      res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные карточки' });
+      return res.status(ERROR_CODE_NOTFOUND).send({ message: 'Карточка не найдена' });
     }
   } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные карточки' });
+    }
     res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка сервера' });
   }
 };
 
 module.exports.dislikeCard = async (req, res) => {
   const ERROR_CODE_REQUEST = 400;
+  const ERROR_CODE_NOTFOUND = 404;
   const ERROR_CODE_DEFAULT = 500;
   try {
     const cardDislike = await Card.findByIdAndUpdate(
@@ -71,9 +82,12 @@ module.exports.dislikeCard = async (req, res) => {
     if (cardDislike) {
       res.status(201).send(cardDislike);
     } else {
-      res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные карточки' });
+      return res.status(ERROR_CODE_NOTFOUND).send({ message: 'Карточка не найдена' });
     }
   } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные карточки' });
+    }
     res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка сервера' });
   }
 };
