@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable comma-dangle */
 /* eslint-disable quotes */
 /* eslint-disable consistent-return */
 /* eslint-disable no-unused-vars */
@@ -31,9 +33,10 @@ module.exports.deleteCard = async (req, res) => {
   const ERROR_CODE_NOTFOUND = 404;
   const ERROR_CODE_DEFAULT = 500;
   try {
-    const cardForDelete = await Card.findByIdAndRemove(req.params.cardId);
-    if (Card) {
-      res.status(200).send({ data: cardForDelete });
+    const cardForDelete = await Card.findById(req.params.cardId);
+    if (cardForDelete) {
+      await Card.deleteOne({ _id: req.params.cardId });
+      res.status(200).send({ _id: req.params.cardId });
     } else {
       return res.status(ERROR_CODE_NOTFOUND).send({ message: 'Карточка не найдена' });
     }
@@ -74,13 +77,9 @@ module.exports.dislikeCard = async (req, res) => {
   const ERROR_CODE_NOTFOUND = 404;
   const ERROR_CODE_DEFAULT = 500;
   try {
-    const cardDislike = await Card.findByIdAndUpdate(
-      req.params.cardId,
-      { $pull: { likes: req.user._id } },
-      { new: true },
-    );
-    if (cardDislike) {
-      res.status(200).send(cardDislike);
+    const currentCard = await Card.findById(req.params.cardId);
+    if (currentCard) {
+      res.status(200).send(await Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true }));
     } else {
       return res.status(ERROR_CODE_NOTFOUND).send({ message: 'Карточка не найдена' });
     }
