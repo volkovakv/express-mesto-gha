@@ -54,7 +54,7 @@ module.exports.likeCard = async (req, res) => {
   const ERROR_CODE_NOTFOUND = 404;
   const ERROR_CODE_DEFAULT = 500;
   try {
-    const currentCard = Card.findById(req.params.cardId);
+    const currentCard = await Card.findById(req.params.cardId);
     if (currentCard) {
       res.status(200).send(await Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true }));
     } else {
