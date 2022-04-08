@@ -57,7 +57,7 @@ module.exports.likeCard = async (req, res) => {
       { new: true },
     );
     if (likeCard) {
-      res.status(201).send(likeCard);
+      res.status(200).send(likeCard);
     } else {
       return res.status(ERROR_CODE_NOTFOUND).send({ message: 'Карточка не найдена' });
     }
@@ -80,7 +80,7 @@ module.exports.dislikeCard = async (req, res) => {
       { new: true },
     );
     if (cardDislike) {
-      res.status(201).send(cardDislike);
+      res.status(200).send(cardDislike);
     } else {
       return res.status(ERROR_CODE_NOTFOUND).send({ message: 'Карточка не найдена' });
     }

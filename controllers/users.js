@@ -88,7 +88,7 @@ module.exports.updateUserAvatar = async (req, res) => {
       },
     );
     if (userForUpdateAvatar) {
-      res.status(201).send(userForUpdateAvatar);
+      res.status(200).send(userForUpdateAvatar);
     } else {
       res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные пользователя' });
     }
