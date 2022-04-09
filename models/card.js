@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-// eslint-disable-next-line import/no-extraneous-dependencies
 const mongoose = require('mongoose');
 
 const cardSchema = new mongoose.Schema({
