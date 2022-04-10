@@ -8,7 +8,10 @@ module.exports.createUser = async (req, res) => {
     const user = await User.create({ name, about, avatar });
     res.status(201).send(user);
   } catch (err) {
-    res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные пользователя' });
+    if (err.name === 'ValidationError') {
+      res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные пользователя' });
+    }
+    res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка сервера' });
   }
 };
 
@@ -63,6 +66,7 @@ module.exports.updateUser = (req, res) => {
       } else {
         res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные пользователя' });
       }
+      res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка сервера' });
     });
 };
 

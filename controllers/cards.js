@@ -38,8 +38,8 @@ module.exports.deleteCard = (req, res) => {
     .catch((err) => {
       if (err.message === 'NotValidId') {
         res.status(ERROR_CODE_NOTFOUND).send({ message: 'Карточка не найдена' });
-      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
-        res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные карточки' });
+      } else if (err.name === 'CastError') {
+        res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректный id карточки' });
       } else {
         res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка сервера' });
       }
@@ -64,8 +64,10 @@ module.exports.likeCard = (req, res) => {
     .catch((err) => {
       if (err.message === 'NotValidId') {
         res.status(ERROR_CODE_NOTFOUND).send({ message: 'Карточка не найдена' });
+      } else if (err.name === 'CastError') {
+        res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректный id карточки' });
       } else {
-        res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные карточки' });
+        res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка сервера' });
       }
     });
 };
@@ -88,8 +90,10 @@ module.exports.dislikeCard = (req, res) => {
     .catch((err) => {
       if (err.message === 'NotValidId') {
         res.status(ERROR_CODE_NOTFOUND).send({ message: 'Карточка не найдена' });
+      } else if (err.name === 'CastError') {
+        res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректный id карточки' });
       } else {
-        res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные карточки' });
+        res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка сервера' });
       }
     });
 };
