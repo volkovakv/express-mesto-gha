@@ -89,8 +89,10 @@ module.exports.updateUserAvatar = (req, res) => {
     .catch((err) => {
       if (err.message === 'NotValidId') {
         res.status(ERROR_CODE_NOTFOUND).send({ message: 'Пользователь не найден' });
-      } else {
+      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
         res.status(ERROR_CODE_REQUEST).send({ message: 'Некорректные данные пользователя' });
+      } else {
+        res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка сервера' });
       }
     });
 };
