@@ -89,12 +89,9 @@ module.exports.getUser = (req, res, next) => {
 };
 
 module.exports.getAllUsers = async (req, res, next) => {
-  try {
-    const allUsers = await User.find({});
-    res.status(200).send(allUsers);
-  } catch (err) {
-    next(err);
-  }
+  User.find({})
+    .then((users) => res.send({ data: users }))
+    .catch(next);
 };
 
 module.exports.updateUser = (req, res, next) => {

@@ -1,8 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { errors } = require('celebrate');
-const { celebrate, Joi } = require('celebrate');
+const { errors, celebrate, Joi } = require('celebrate');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
@@ -42,8 +41,8 @@ app.use(auth);
 
 app.use(usersRouter);
 app.use(cardsRouter);
-app.use(error);
 app.use(errors());
+app.use(error);
 
 app.all('*', (req, res, next) => {
   try {
