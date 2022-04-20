@@ -46,26 +46,31 @@ module.exports.getMe = async (req, res, next) => {
   }
 };
 
-module.exports.createUser = async (req, res, next) => {
-  try {
-    const {
-      name, about, avatar, email, password,
-    } = req.body;
-    const hash = await bcrypt.hash(password, 15);
-    const user = await User.create({
-      name, about, avatar, email, password: hash,
-    });
-    res.status(201).send(user);
-  } catch (err) {
-    if (err.name === 'ValidationError') {
-      next(new RequestError('Некорректные данные пользователя'));
-    }
-    if (err.code === 11000) {
-      next(new ExistEmailError('Пользователь с таким email зарегистрирован'));
-    } else {
-      next(err);
-    }
+module.exports.createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  if (!email || !password) {
+    next(new RequestError('Не переданы email или пароль'));
   }
+  bcrypt
+    .hash(password, 15)
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }))
+    .then((user) => {
+      res.status(200).send(user);
+    })
+    .catch((err) => {
+      if (err.code === 11000) {
+        next(new ExistEmailError('Пользователь с таким email зарегистрирован'));
+      }
+      next(err);
+    });
 };
 
 module.exports.getUser = (req, res, next) => {
@@ -91,7 +96,7 @@ module.exports.getUser = (req, res, next) => {
 module.exports.getAllUsers = async (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(next);
+    .catch((err) => next(err));
 };
 
 module.exports.updateUser = (req, res, next) => {
