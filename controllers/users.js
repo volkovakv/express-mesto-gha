@@ -1,7 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const ExistEmailError = require('../error/ExistEmailError');
-const IdError = require('../error/IdError');
 const NotFoundError = require('../error/NotFoundError');
 const RequestError = require('../error/RequestError');
 
@@ -9,7 +8,10 @@ const User = require('../models/user');
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
+  if (!email || !password) {
+    next(new RequestError('Требуется ввести логин и пароль'));
+  }
+  User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
@@ -18,8 +20,8 @@ module.exports.login = (req, res, next) => {
       );
       return res.status(200).send({ token });
     })
-    .catch(() => {
-      next(new IdError('Ошибка авторизации: неправильная почта или логин'));
+    .catch((err) => {
+      next(err);
     });
 };
 
