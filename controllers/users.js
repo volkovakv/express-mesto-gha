@@ -27,21 +27,14 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.getMe = async (req, res, next) => {
-  const userId = req.user._id;
-  try {
-    const user = await User.findById(userId);
-    if (user) {
+  User.findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        next(new NotFoundError('Нет пользователя с таким id'));
+      }
       res.status(200).send({ data: user });
-    } else {
-      throw new NotFoundError('Пользователь не найден');
-    }
-  } catch (err) {
-    if (err.name === 'CastError') {
-      next(new RequestError('Некорректный id пользователя'));
-    } else {
-      next(err);
-    }
-  }
+    })
+    .catch((err) => next(err));
 };
 
 module.exports.createUser = (req, res, next) => {
