@@ -26,7 +26,7 @@ module.exports.login = (req, res, next) => {
     });
 };
 
-module.exports.getMe = async (req, res, next) => {
+module.exports.getMe = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
