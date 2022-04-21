@@ -37,10 +37,8 @@ app.post('/signup', celebrate({
   }),
 }, createUser));
 
-app.use(auth);
-
-app.use(usersRouter);
-app.use(cardsRouter);
+app.use(auth, usersRouter);
+app.use(auth, cardsRouter);
 
 app.use('*', (req, res, next) => {
   next(new NotFoundError('Страница не найдена'));
@@ -48,17 +46,11 @@ app.use('*', (req, res, next) => {
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  const { message } = err;
-  const statusCode = err.statusCode || 500;
+app.use((err, req, res) => {
+  const { statusCode = 500, message } = err;
   res
     .status(statusCode)
-    .send({
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
-  next();
+    .send({ message });
 });
 
 app.listen(PORT, () => {});

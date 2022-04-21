@@ -10,7 +10,7 @@ const User = require('../models/user');
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    next(new RequestError('Требуется ввести почту и пароль'));
+    next(new RequestError('Требуется ввести почту; и пароль'));
   }
   User.findUserByCredentials(email, password)
     .then((user) => {
