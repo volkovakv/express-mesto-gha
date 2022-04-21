@@ -8,8 +8,8 @@ const {
 cardsRouter.get('/cards', getCards);
 cardsRouter.post('/cards', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    link: Joi.string().min(2)
+    name: Joi.string().min(2).max(30).required(),
+    link: Joi.string().min(2).required()
       .regex(
         /^((http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9\\-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-\\/])*)?/,
       ),
