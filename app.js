@@ -24,6 +24,7 @@ app.post('/signin', celebrate({
     password: Joi.string().required(),
   }),
 }), login);
+
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -41,8 +42,6 @@ app.use(auth);
 
 app.use(usersRouter);
 app.use(cardsRouter);
-app.use(errors());
-app.use(error);
 
 app.all('*', (req, res, next) => {
   try {
@@ -51,5 +50,8 @@ app.all('*', (req, res, next) => {
     next(err);
   }
 });
+
+app.use(errors());
+app.use(error);
 
 app.listen(PORT, () => {});
