@@ -6,7 +6,7 @@ const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
-const error = require('./middlewares/error');
+
 const NotFoundError = require('./error/NotFoundError');
 
 // Слушаем 3000 порт
@@ -52,6 +52,17 @@ app.all('*', (req, res, next) => {
 });
 
 app.use(errors());
-app.use(error);
+
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
+  next();
+});
 
 app.listen(PORT, () => {});
