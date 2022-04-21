@@ -32,7 +32,7 @@ module.exports.getMe = (req, res, next) => {
       if (!user) {
         next(new NotFoundError('Данные пользователя не найдены'));
       }
-      return res.status(200).send(user);
+      return res.status(200).send({ data: user });
     })
     .catch((err) => next(err));
 };
