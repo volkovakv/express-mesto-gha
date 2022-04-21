@@ -16,12 +16,7 @@ module.exports.login = (req, res, next) => {
         'secret1993key',
         { expiresIn: '7d' },
       );
-      res
-        .cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-        })
-        .end();
+      return res.status(200).send({ token });
     })
     .catch(() => {
       next(new IdError('Ошибка авторизации: неправильная почта или логин'));
