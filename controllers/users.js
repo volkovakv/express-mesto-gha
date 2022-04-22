@@ -116,8 +116,8 @@ module.exports.updateUser = (req, res, next) => {
       _id: user._id,
     }))
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new RequestError('Некорректные данные пользователя'));
+      if (err.name === 'CastError') {
+        next(new RequestError('Некорректный id пользователя'));
       } else {
         next(err);
       }
