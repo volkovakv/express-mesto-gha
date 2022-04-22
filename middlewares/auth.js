@@ -5,7 +5,7 @@ module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    next(new IdError('Ошибка авторизации: токен не начинается с Bearer'));
+    throw new IdError('Ошибка авторизации: токен не начинается с Bearer');
   }
 
   const token = authorization.replace('Bearer ', '');
@@ -20,6 +20,4 @@ module.exports = (req, res, next) => {
   req.user = payload;
 
   next();
-
-  return true;
 };

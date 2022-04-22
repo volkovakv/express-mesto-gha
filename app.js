@@ -6,6 +6,7 @@ const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const error = require('./middlewares/error');
 const NotFoundError = require('./error/NotFoundError');
 
 // Слушаем 3000 порт
@@ -44,11 +45,12 @@ app.post(
 app.use(auth, usersRouter);
 app.use(auth, cardsRouter);
 
-app.use('*', (req, res, next) => {
+app.use('*', auth, (req, res, next) => {
   next(new NotFoundError('Страница не найдена'));
 });
 
 app.use(errors());
+app.use(error);
 
 app.use((err, req, res, next) => {
   const { message } = err;

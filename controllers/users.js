@@ -66,6 +66,8 @@ module.exports.createUser = (req, res, next) => {
     .catch((err) => {
       if (err.code === 11000) {
         next(new ExistEmailError('Пользователь с таким email зарегистрирован'));
+      } else if (err.name === 'ValidationError') {
+        next(new RequestError('Некорректные данные пользователя'));
       }
       next(err);
     });
@@ -73,7 +75,7 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
-    .orFail(new Error('NotValidId'))
+    .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then((user) => res.send({
       name: user.name,
       about: user.about,
@@ -81,9 +83,7 @@ module.exports.getUser = (req, res, next) => {
       _id: user._id,
     }))
     .catch((err) => {
-      if (err.message === 'NotValidId') {
-        next(new NotFoundError('Пользователь не найден'));
-      } else if (err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new RequestError('Некорректный id пользователя'));
       } else {
         next(err);
@@ -107,16 +107,14 @@ module.exports.updateUser = (req, res, next) => {
       runValidators: true,
     },
   )
-    .orFail(new Error('NotValidId'))
+    .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then((user) => res.send({
       name: user.name,
       about: user.about,
       _id: user._id,
     }))
     .catch((err) => {
-      if (err.message === 'NotValidId') {
-        next(new NotFoundError('Пользователь не найден'));
-      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new RequestError('Некорректные данные пользователя'));
       } else {
         next(err);
@@ -134,15 +132,13 @@ module.exports.updateUserAvatar = (req, res, next) => {
       runValidators: true,
     },
   )
-    .orFail(new Error('NotValidId'))
+    .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then((user) => res.send({
       avatar: user.avatar,
       _id: user._id,
     }))
     .catch((err) => {
-      if (err.message === 'NotValidId') {
-        next(new NotFoundError('Пользователь не найден'));
-      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new RequestError('Некорректные данные пользователя'));
       } else {
         next(err);
