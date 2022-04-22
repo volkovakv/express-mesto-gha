@@ -66,10 +66,12 @@ module.exports.createUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new RequestError('Некорректные данные пользователя'));
-      } else if (err.code === 11000) {
-        next(new ExistEmailError('Пользователь с таким email зарегистрирован'));
       }
-      next(err);
+      if (err.code === 11000) {
+        next(new ExistEmailError('Пользователь с таким email зарегистрирован'));
+      } else {
+        next(err);
+      }
     });
 };
 
