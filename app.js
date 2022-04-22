@@ -1,3 +1,6 @@
+/* Проверьте, пожалуйста, вручную работу маршрута usersRouter.patch('/users/me', ...)
+потому что тест показывает неправильный результат */
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
